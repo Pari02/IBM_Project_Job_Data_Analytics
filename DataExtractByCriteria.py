@@ -1,43 +1,41 @@
 # -*- coding: utf-8 -*-
 """
-@author: Parikshita
-@date: 09/12/2016
+Created on Mon Sep 12 16:52:16 2016
 
+@author: Parikshita
 """
 
 # import pacakages
 import requests
 from requests_oauthlib import OAuth1
-import json, csv
+import json, itertools
+from pandas import DataFrame
+
 
 # define & assign parameter values for authorization
 consumerKey = "IBM"
-consumerSecret = "xxxxx"
+consumerSecret = "F9751F2B48A3474E9C6E41FF989F0AF2"
 tokenKey = "Explorer"
-tokenSecret = "xxxx"
+tokenSecret = "95C93BE538BD48F096D63B03E854AA84"
 resources = ("careerareas", "stateareas", "jobtitles", "jobs", "internships", "employers", "skills", "skillcategories", "degrees")
 
 # loop over each resource to get API data by criteria
 for res in resources:
     print res
-    url = ("http://sandbox.api.burning-glass.com/v202/explorer/"+res)
-    #url = ("http://sandbox.api.burning-glass.com/v202/explorer/degrees")
+    url = ("http://sandbox.api.burning-glass.com/v202/explorer/"+res+"?culture=EnglishUS&orderby=Id ASC")
     # enter authorization parameters
     auth =  OAuth1(consumerKey, consumerSecret, tokenKey, tokenSecret)
     # get the api data by passing request type, url and authorization parameters
     response = requests.request("GET", url, auth=auth).text
     # converting the data into json format
-    # and extracting relevant information   
+    # and extracting relevant information  
     jsonData = json.loads(response)
-    reqJSON = jsonData["result"]["data"]
-    # exporting the data to csv file
-    file = open("Data\\"+res+"ByCri.csv", "w")
-    csvwriter = csv.writer(file)
-    count = 0
-    for x in reqJSON:
-        if count == 0:
-            header = x.keys()
-            csvwriter.writerow(header)
-            count += 1
-        csvwriter.writerow(x.values())
-    file.close()
+    # applying using list comprehension to avoid key value error
+    if[req for req in jsonData if "result" in jsonData] != []:
+        reqJSON = [req for req in jsonData["result"]["data"]]
+        # converting extracted data in to dataframe
+        df = DataFrame(list(itertools.chain(reqJSON)))
+        # exporting the data to csv file
+        df.to_csv("Data/"+res+".csv", encoding='utf-8', index = False)
+    
+        
