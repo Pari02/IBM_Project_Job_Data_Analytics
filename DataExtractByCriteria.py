@@ -14,9 +14,9 @@ from pandas import DataFrame
 
 # define & assign parameter values for authorization
 consumerKey = "IBM"
-consumerSecret = "F9751F2B48A3474E9C6E41FF989F0AF2"
+consumerSecret = "xxxxx"
 tokenKey = "Explorer"
-tokenSecret = "95C93BE538BD48F096D63B03E854AA84"
+tokenSecret = "xxxxx"
 resources = ("careerareas", "stateareas", "jobtitles", "jobs", "internships", "employers", "skills", "skillcategories", "degrees")
 
 # loop over each resource to get API data by criteria
