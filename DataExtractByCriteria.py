@@ -3,30 +3,24 @@
 Created on Mon Sep 12 16:52:16 2016
 
 @author: Parikshita
+@date: 09/12/2016
+
 """
 
 # import pacakages
-import requests
-from requests_oauthlib import OAuth1
 import json, itertools
 from pandas import DataFrame
+import extractAPIData
+from extractAPIData import *
 
-
-# define & assign parameter values for authorization
-consumerKey = "IBM"
-consumerSecret = "xxxxx"
-tokenKey = "Explorer"
-tokenSecret = "xxxxx"
-resources = ("careerareas", "stateareas", "jobtitles", "jobs", "internships", "employers", "skills", "skillcategories", "degrees")
+resources = ("careerareas", "stateareas", "jobtitles", "skillcategories")
 
 # loop over each resource to get API data by criteria
 for res in resources:
     print res
     url = ("http://sandbox.api.burning-glass.com/v202/explorer/"+res+"?culture=EnglishUS&orderby=Id ASC")
-    # enter authorization parameters
-    auth =  OAuth1(consumerKey, consumerSecret, tokenKey, tokenSecret)
-    # get the api data by passing request type, url and authorization parameters
-    response = requests.request("GET", url, auth=auth).text
+    # get the API data 
+    response = extractAPIData(url)
     # converting the data into json format
     # and extracting relevant information  
     jsonData = json.loads(response)
