@@ -1,0 +1,21 @@
+import json, itertools, pandas as pd
+from pandas import DataFrame
+from pandas.io.json import json_normalize
+import extractID
+from extractID import *
+
+def main():
+  jobID = extractID("Data/jobsMarketData.csv")
+  internshipID = extractID("Data/internshipsMarketData.csv")
+  
+  for job in jobID:
+    for internship in internshipID:
+      if jobID[job] == internshipID[internship]:
+        jobID["InternshipFlag"] = 1
+      else:
+        jobID["InternshipFlag"] = 0
+
+  print jobID.head()
+  
+
+      
