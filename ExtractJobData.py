@@ -72,24 +72,24 @@ df_new.to_csv("Data/job_jobtitle.csv", encoding='utf-8', index = False)
 
 # JOB INTERNSHIP
 # extraction of job intership data and appending jobID to it
-job_internship = []
-# loop over each resource to get API data
-for Id in jobID:
-    #print Id
-    url = ("http://sandbox.api.burning-glass.com/v202/explorer/internships/"+Id+"?culture=EnglishUS&orderby=Id ASC")
-    # get the api data by passing request type, url and authorization parameters
-    response = extractAPIData(url)
-    # converting the data into json format
-    # and extracting relevant information  
-    jsonData = json.loads(response)
-    # applying using list comprehension to avoid key value error
-    if[req for req in jsonData if "result" in jsonData] != []:
-        reqJSON = [req in jsonData["result"]["data"]]
-        # converting extracted data in to dataframe
-        df = DataFrame(list(itertools.chain(reqJSON)))
-        # appending data
-        job_internship.append(df)     
-        # concatinating the nested list into a dataframe
-        df_new = pd.concat(job_internship, axis=0)  
-# exporting the data to csv file
-df_new.to_csv("Data/job_internships.csv", encoding='utf-8', index = False)
+#job_internship = []
+## loop over each resource to get API data
+#for Id in jobID:
+#    #print Id
+#    url = ("http://sandbox.api.burning-glass.com/v202/explorer/internships/"+Id+"?culture=EnglishUS&orderby=Id ASC")
+#    # get the api data by passing request type, url and authorization parameters
+#    response = extractAPIData(url)
+#    # converting the data into json format
+#    # and extracting relevant information  
+#    jsonData = json.loads(response)
+#    # applying using list comprehension to avoid key value error
+#    if[req for req in jsonData if "result" in jsonData] != []:
+#        reqJSON = [req in jsonData["result"]["data"]]
+#        # converting extracted data in to dataframe
+#        df = DataFrame(list(itertools.chain(reqJSON)))
+#        # appending data
+#        job_internship.append(df)     
+#        # concatinating the nested list into a dataframe
+#        df_new = pd.concat(job_internship, axis=0)  
+## exporting the data to csv file
+#df_new.to_csv("Data/job_internships.csv", encoding='utf-8', index = False)
