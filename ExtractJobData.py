@@ -34,12 +34,12 @@ for res in resources:
         # applying using list comprehension to avoid key value error
         if[req for req in jsonData if "result" in jsonData] != []:
             reqJSON = [req for req in jsonData["result"]["data"]]
-        # converting extracted data in to dataframe
-        df = DataFrame(list(itertools.chain(reqJSON)))
-        # appending data
-        market_data.append(df)     
-        # concatinating the nested list into a dataframe
-        df_new = pd.concat(market_data, axis=0) 
+            # converting extracted data in to dataframe
+            df = DataFrame(list(itertools.chain(reqJSON)))
+            # appending data
+            market_data.append(df)     
+            # concatinating the nested list into a dataframe
+            df_new = pd.concat(market_data, axis=0) 
     # exporting the data to csv file
     df_new.to_csv("Data/"+res+"MarketData.csv", encoding='utf-8', index = False)
 
@@ -59,14 +59,14 @@ for Id in jobID:
     # applying using list comprehension to avoid key value error
     if[req for req in jsonData if "result" in jsonData] != []:
         reqJSON = [req for req in jsonData["result"]["data"]]
-    # converting extracted data in to dataframe
-    df = DataFrame(list(itertools.chain(reqJSON)))
-    # adding jobID to the dataframe
-    df['jobID'] = Id
-    # appending data
-    job_title.append(df)     
-    # concatinating the nested list into a dataframe
-    df_new = pd.concat(job_title, axis=0)  
+        # converting extracted data in to dataframe
+        df = DataFrame(list(itertools.chain(reqJSON)))
+        # adding jobID to the dataframe
+        df['jobID'] = Id
+        # appending data
+        job_title.append(df)     
+        # concatinating the nested list into a dataframe
+        df_new = pd.concat(job_title, axis=0)  
 # exporting the data to csv file
 df_new.to_csv("Data/job_jobtitle.csv", encoding='utf-8', index = False)
 
@@ -85,15 +85,11 @@ for Id in jobID:
     # applying using list comprehension to avoid key value error
     if[req for req in jsonData if "result" in jsonData] != []:
         reqJSON = [req in jsonData["result"]["data"]]
-    # converting extracted data in to dataframe
-    df = DataFrame(list(itertools.chain(reqJSON)))
-    # appending data
-    job_internship.append(df)     
-    # concatinating the nested list into a dataframe
-    df_new = pd.concat(job_internship, axis=0)  
+        # converting extracted data in to dataframe
+        df = DataFrame(list(itertools.chain(reqJSON)))
+        # appending data
+        job_internship.append(df)     
+        # concatinating the nested list into a dataframe
+        df_new = pd.concat(job_internship, axis=0)  
 # exporting the data to csv file
 df_new.to_csv("Data/job_internships.csv", encoding='utf-8', index = False)
-
-
-
-
