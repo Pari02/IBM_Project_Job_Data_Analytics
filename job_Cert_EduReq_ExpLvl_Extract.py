@@ -43,17 +43,20 @@ def getKeyData(keyname, Data):
     # defining variables
     apiData = Data
     key_data = []
-    if keyname == "data":
-        if check("certifications", apiData) != 0:
-            del apiData["result"][keyname]["certifications"]
-        if check("educationRequirements", apiData) != 0:
-            del apiData["result"][keyname]["certifications"]
-        if check("experienceLevels", apiData) != 0:
-            del apiData["result"][keyname]["certifications"]
-        key_data = getData(keyname, apiData)
+    if keyname != "data":
+        if check(keyname, Data) == 1:
+            key_data = getData(keyname, Data)        
     else:
-        if check(keyname, Data) != 0:
-            key_data = getData(keyname, Data)
+        if check("certifications", apiData) == 1:
+            #del apiData["result"][keyname]["certifications"]
+            print "yay"
+        if check("educationRequirements", apiData) == 1:
+            #del apiData["result"][keyname]["certifications"]
+            print "yay"
+        if check("experienceLevels", apiData) == 1:
+            #del apiData["result"][keyname]["certifications"]
+            print "yay"
+        key_data = getData(keyname, apiData)
     return key_data
 
 # function to extract data 
@@ -91,7 +94,7 @@ def main():
     #cert_data = []
     #eduReq_data = []
     #expLvl_data = []
-    job_data = []
+#    job_data = []
     # loop over each resource to get API data by stateAreaID
     for Id in jobID:
         #print Id
@@ -102,7 +105,7 @@ def main():
         jsonData = json.loads(response)
         # caling function check to see if the key value exists in json data extracted from API
         # function extracts and returs the data
-        cert = getKeyData("certification", jsonData)
+        cert = getKeyData("certifications", jsonData)
         eduReq = getKeyData("educationRequirements", jsonData)    
         expLvl = getKeyData("experienceLevels", jsonData)    
         job = getKeyData("data", jsonData)
