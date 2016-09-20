@@ -68,9 +68,7 @@ def getData(keyname, Data, Id):
         keyJSON = Data["result"][keyname]
         # converting extracted data in to dataframe
         df_key = DataFrame(json_normalize(keyJSON))
-        # adding jobID to the dataframe
-        df_key['jobID'] = "explorer/jobs/"+Id
-
+       
     else:
         # store the data in new variable
         keyJSON = Data["result"]["data"][keyname]
