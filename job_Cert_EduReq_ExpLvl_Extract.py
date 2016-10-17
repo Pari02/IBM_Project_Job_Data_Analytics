@@ -57,6 +57,8 @@ def getKeyData(keyname, Data, Id):
         if check("experienceLevels", apiData) == 1:
             del apiData["result"][keyname]["experienceLevels"]
             #print "yay"
+        if check("occupationGroup", apiData) == 1:
+            del apiData["result"][keyname]["occupationGroup"]
         key_data = getData(keyname, apiData, Id)
     return key_data
 
@@ -68,29 +70,31 @@ def getData(keyname, Data, Id):
         keyJSON = Data["result"][keyname]
         # converting extracted data in to dataframe
         df_key = DataFrame(json_normalize(keyJSON))
-       
+
     else:
         # store the data in new variable
         keyJSON = Data["result"]["data"][keyname]
         # converting extracted data in to dataframe1
-        df_key = DataFrame(list(itertools.chain(keyJSON)))
+        #df_key = DataFrame(list(itertools.chain(keyJSON)))
+        df_key = DataFrame(json_normalize(keyJSON))
         # adding jobID to the dataframe
-        df_key['jobID'] = "explorer/jobs/"+Id
+        df_key['occupationID'] = Id
 
     return df_key
 
 def main():
     # extraction of job title data and appending jobID to it
-    jobID = extractID("Data/jobsMarketData.csv")
+    jobID = extractID("Data1/occupationsByState.csv")
     # define empty lists
     cert_data = DataFrame()
     eduReq_data = DataFrame()
     expLvl_data = DataFrame()
-    job_data = DataFrame()
+    occGroup_data = DataFrame()
+    occ_data = DataFrame()
     # loop over each resource to get API data by stateAreaID
     for Id in jobID:
         #print Id
-        url = ("http://sandbox.api.burning-glass.com/v202/explorer/jobs/"+Id+"?culture=EnglishUS&orderby=Id ASC")
+        url = ("http://sandbox.api.burning-glass.com/v206/explorer/occupations/"+Id+"?culture=EnglishUS&orderby=Id ASC")
         # get the api data by passing request type, url and authorization parameters
         response = extractAPIData(url)
         # converting the data into json format and extracting relevant information  
@@ -100,21 +104,25 @@ def main():
         cert = DataFrame(getKeyData("certifications", jsonData, Id))
         eduReq = DataFrame(getKeyData("educationRequirements", jsonData, Id))
         expLvl = DataFrame(getKeyData("experienceLevels", jsonData, Id))
-        job = DataFrame(getKeyData("data", jsonData, Id))
+        occGroup = DataFrame(getKeyData("occupationGroup", jsonData, Id))
+        occ = DataFrame(getKeyData("data", jsonData, Id))
         
         
         # appending data
-        cert_data = pd.concat([cert_data, cert])
+        cert_data = pd.concat([cert_data, cert], axis=0)
         eduReq_data = pd.concat([eduReq_data, eduReq], axis=0)
         expLvl_data = pd.concat([expLvl_data, expLvl], axis=0)
-        job_data = pd.concat([job_data, job], axis=0)
+        occGroup_data = pd.concat([occGroup_data, occGroup], axis=0)
+        occ_data = pd.concat([occ_data, occ], axis=0)
         
         
     # exporting the data to csv file
-    cert_data.to_csv("Data/certificationsData.csv", encoding='utf-8', index = False)
-    eduReq_data.to_csv("Data/eduRequirementsData.csv", encoding='utf-8', index = False)
-    expLvl_data.to_csv("Data/expLevelData.csv", encoding='utf-8', index = False)
-    job_data.to_csv("Data/jobData.csv", encoding='utf-8', index = False)
+    cert_data.to_csv("Data1/certificationsData.csv", encoding='utf-8', index = False)
+    eduReq_data.to_csv("Data1/eduRequirementsData.csv", encoding='utf-8', index = False)
+    expLvl_data.to_csv("Data1/expLevelData.csv", encoding='utf-8', index = False)
+    occGroup_data.to_csv("Data1/occupationGroup.csv", encoding='utf-8', index = False)
+    occ_data.to_csv("Data1/OccupationsData.csv", encoding='utf-8', index = False)
+#    occ_data.to_excel("Data1/OccupationsData.xlsx", encoding='utf-8', index = False)
 
 if __name__ == "__main__":
     main()
