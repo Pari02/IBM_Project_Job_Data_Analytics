@@ -69,7 +69,7 @@ def get_data():
     
     occGrpSal = pd.DataFrame()
     # save the link to connect to dashDB
-    url = "jdbc:db2://50.97.93.115:50000/BLUDB:user=dash015183;password=9D6Fk9i1h942;"
+    url = "jdbc:db2://**.**.**.**:*****/BLUDB:user=***;password=****;"
     
     # extract the required tables from dashDB
     stateareas = sqlContext.read.jdbc(url, 'STATEAREAS')
