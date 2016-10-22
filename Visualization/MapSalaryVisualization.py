@@ -136,23 +136,10 @@ def get_States_Sal(states_dict):
     salStateAgg['SALARYAVERAGE'] = salStateAgg['SALARYAVERAGE'].astype(int)
     salStateAgg['SALARYREALTIMEAVERAGE'] = salStateAgg['SALARYREALTIMEAVERAGE'].astype(int)
     
-    # Create colorMap dictionary
-    #keys = tuple(pd.unique(salStateAgg["SALARYREALTIMEAVERAGE"]))
-    #values = tuple(["#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
-    #    "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87",
-    #    "#5A0007", "#809693", "#FEFFE6", "#1B4400", "#4FC601", "#3B5DFF", "#4A3B53", "#FF2F80",
-    #    "#61615A", "#BA0900", "#6B7900", "#00C2A0", "#FFAA92", "#FF90C9", "#B903AA", "#D16100",                
-    #    "#DDEFFF", "#000035", "#7B4F4B", "#A1C299", "#300018", "#0AA6D8", "#013349", "#00846F",
-    #    "#372101", "#FFB500", "#C2FFED", "#A079BF", "#CC0744", "#C0B9B2", "#C2FF99", "#001E09",
-    #    "#00489C", "#6F0062", "#0CBD66", "#EEC3FF"])
-    #values = palette
-    #colorMap = dict(itertools.izip(keys, values))
-    
     # add values to the source and colorDict
     source.add(data = salStateAgg["STATECODE"], name = 'statecode')
     source.add(data = salStateAgg["SALARYREALTIMEAVERAGE"], name = 'salRealAvg')
     source.add(data = salStateAgg["SALARYAVERAGE"], name = 'salAvg')
-    #source.add(data = [colorMap[x] for x in salStateAgg["SALARYREALTIMEAVERAGE"]], name = 'type_color')
     
     return source
 
@@ -172,16 +159,6 @@ def get_OccGrp_Data():
     occGrpStateTop10['SALARYAVERAGE'] = occGrpStateTop10['SALARYAVERAGE'].astype(int)
     occGrpStateTop10['SALARYREALTIMEAVERAGE'] = occGrpStateTop10['SALARYREALTIMEAVERAGE'].astype(int)
     
-    # Create colorMap dictionary
-    #keys = tuple(pd.unique(occGrpStateTop10.SALARYREALTIMEAVERAGE))
-    #values = tuple(["#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
-    #    "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87",
-    #    "#5A0007", "#809693", "#FEFFE6", "#1B4400", "#4FC601", "#3B5DFF", "#4A3B53", "#FF2F80",
-    #    "#61615A", "#BA0900", "#6B7900", "#00C2A0", "#FFAA92", "#FF90C9", "#B903AA", "#D16100",                
-    #    "#DDEFFF", "#000035", "#7B4F4B", "#A1C299", "#300018"]) 
-    #values = BrBG[10]
-    #colorMap = dict(itertools.izip(keys, values))
-    
     # extract distinct statenames and ranks and convert numeric data to string
     stateName = [str(x) for x in list(pd.unique(occGrpStateTop10.stateName))]
     ranks = [str(x) for x in sorted(list(pd.unique(occGrpStateTop10.rn)))]
@@ -200,7 +177,6 @@ def get_OccGrp_Data():
         name=occGrpStateTop10["NAME"],
         realSalAvg=occGrpStateTop10["SALARYREALTIMEAVERAGE"],
         salAvg=occGrpStateTop10["SALARYAVERAGE"],
-        #type_color=[colorMap[x] for x in occGrpStateTop10["SALARYREALTIMEAVERAGE"]],
         )
     )
     return source, ranks, stateName
@@ -258,15 +234,6 @@ mp.add_tools(HoverTool(renderers=[mp2],
         ("Salary RealTime Average", "$"+"@salRealAvg"),
         ("Salary Average", "$"+"@salAvg"),
         ("(Lon, Lat)", "($x, $y)"),]))
-
-# add legend properties
-#mp.legend.location= 'top_left'
-#mp.legend.label_text_font_size = '7pt'
-#mp.legend.glyph_height = 8
-#mp.legend.label_text_baseline = 'ideographic'
-#mp.legend.label_text_font_style = 'bold'
-#mp.legend.spacing = 0
-#mp.legend.margin = 0
 
 tab1 = Panel(child=mp, title="Salary Average Distribution")
 
