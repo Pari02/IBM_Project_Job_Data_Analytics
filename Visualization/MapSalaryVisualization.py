@@ -24,6 +24,7 @@ from bokeh.models import (
     , LabelSet, TapTool, LogTicker, BasicTicker
     , LinearColorMapper, Legend,
 )
+from bokeh.palettes import Blues9 as palette, Spectral
 from bokeh.plotting import figure, hplot
 from bokeh.sampledata.us_states import data as states_dict
 import numpy as np, requests, json, pandas as pd, itertools
@@ -69,7 +70,7 @@ def get_data():
     
     occGrpSal = pd.DataFrame()
     # save the link to connect to dashDB
-    url = "jdbc:db2://50.97.93.115:50000/BLUDB:user=dash015183;password=9D6Fk9i1h942;"
+    url = "jdbc:db2://hostname:port/BLUDB:user=userId;password=password;"
     
     # extract the required tables from dashDB
     stateareas = sqlContext.read.jdbc(url, 'STATEAREAS')
@@ -127,23 +128,27 @@ def get_States_Sal(states_dict):
     # get average of salary occupation group in each state
     salStateAgg = pd.DataFrame(salStateData.groupby(['STATECODE', 'stateName'], axis=0, as_index=False)['SALARYAVERAGE', 'SALARYREALTIMEAVERAGE'].mean()).reset_index()
     
+    # convert float point to interger
+    salStateAgg['SALARYAVERAGE'] = salStateAgg['SALARYAVERAGE'].astype(int)
+    salStateAgg['SALARYREALTIMEAVERAGE'] = salStateAgg['SALARYREALTIMEAVERAGE'].astype(int)
+    
     # Create colorMap dictionary
-    keys = tuple(pd.unique(salStateAgg["SALARYREALTIMEAVERAGE"]))
-    values = tuple(["#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
-        "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87",
-        "#5A0007", "#809693", "#FEFFE6", "#1B4400", "#4FC601", "#3B5DFF", "#4A3B53", "#FF2F80",
-        "#61615A", "#BA0900", "#6B7900", "#00C2A0", "#FFAA92", "#FF90C9", "#B903AA", "#D16100",                
-        "#DDEFFF", "#000035", "#7B4F4B", "#A1C299", "#300018", "#0AA6D8", "#013349", "#00846F",
-        "#372101", "#FFB500", "#C2FFED", "#A079BF", "#CC0744", "#C0B9B2", "#C2FF99", "#001E09",
-        "#00489C", "#6F0062", "#0CBD66", "#EEC3FF"])
-
-    colorMap = dict(itertools.izip(keys, values))
+    #keys = tuple(pd.unique(salStateAgg["SALARYREALTIMEAVERAGE"]))
+    #values = tuple(["#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
+    #    "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87",
+    #    "#5A0007", "#809693", "#FEFFE6", "#1B4400", "#4FC601", "#3B5DFF", "#4A3B53", "#FF2F80",
+    #    "#61615A", "#BA0900", "#6B7900", "#00C2A0", "#FFAA92", "#FF90C9", "#B903AA", "#D16100",                
+    #    "#DDEFFF", "#000035", "#7B4F4B", "#A1C299", "#300018", "#0AA6D8", "#013349", "#00846F",
+    #    "#372101", "#FFB500", "#C2FFED", "#A079BF", "#CC0744", "#C0B9B2", "#C2FF99", "#001E09",
+    #    "#00489C", "#6F0062", "#0CBD66", "#EEC3FF"])
+    #values = palette
+    #colorMap = dict(itertools.izip(keys, values))
     
     # add values to the source and colorDict
     source.add(data = salStateAgg["STATECODE"], name = 'statecode')
     source.add(data = salStateAgg["SALARYREALTIMEAVERAGE"], name = 'salRealAvg')
     source.add(data = salStateAgg["SALARYAVERAGE"], name = 'salAvg')
-    source.add(data = [colorMap[x] for x in salStateAgg["SALARYREALTIMEAVERAGE"]], name = 'type_color')
+    #source.add(data = [colorMap[x] for x in salStateAgg["SALARYREALTIMEAVERAGE"]], name = 'type_color')
     
     return source
 
@@ -159,15 +164,19 @@ def get_OccGrp_Data():
     # get top 10 salaries in occupation group and in each state
     occGrpStateTop10 = (occGrpDataAgg.assign(rn=occGrpDataAgg.sort_values(['SALARYREALTIMEAVERAGE', 'SALARYAVERAGE'], ascending=False).groupby(['stateName']).cumcount() + 1).query('rn <= 10').sort_values(['stateName','rn']))
     
-    # Create colorMap dictionary
-    keys = tuple(pd.unique(occGrpStateTop10.NAME))
-    values = tuple(["#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
-        "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87",
-        "#5A0007", "#809693", "#FEFFE6", "#1B4400", "#4FC601", "#3B5DFF", "#4A3B53", "#FF2F80",
-        "#61615A", "#BA0900", "#6B7900", "#00C2A0", "#FFAA92", "#FF90C9", "#B903AA", "#D16100",                
-        "#DDEFFF", "#000035", "#7B4F4B", "#A1C299", "#300018"]) 
+    # convert float point to interger
+    occGrpStateTop10['SALARYAVERAGE'] = occGrpStateTop10['SALARYAVERAGE'].astype(int)
+    occGrpStateTop10['SALARYREALTIMEAVERAGE'] = occGrpStateTop10['SALARYREALTIMEAVERAGE'].astype(int)
     
-    colorMap = dict(itertools.izip(keys, values))
+    # Create colorMap dictionary
+    #keys = tuple(pd.unique(occGrpStateTop10.SALARYREALTIMEAVERAGE))
+    #values = tuple(["#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
+    #    "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87",
+    #    "#5A0007", "#809693", "#FEFFE6", "#1B4400", "#4FC601", "#3B5DFF", "#4A3B53", "#FF2F80",
+    #    "#61615A", "#BA0900", "#6B7900", "#00C2A0", "#FFAA92", "#FF90C9", "#B903AA", "#D16100",                
+    #    "#DDEFFF", "#000035", "#7B4F4B", "#A1C299", "#300018"]) 
+    #values = BrBG[10]
+    #colorMap = dict(itertools.izip(keys, values))
     
     # extract distinct statenames and ranks and convert numeric data to string
     stateName = [str(x) for x in list(pd.unique(occGrpStateTop10.stateName))]
@@ -178,8 +187,8 @@ def get_OccGrp_Data():
     # create data dictionary for visualization
     source = ColumnDataSource(
     data=dict(
-        ar=[str(x) for x in occGrpStateTop10["rn"]],
-        code=[str(y) for y in occGrpStateTop10["stateName"]],
+        salRank=[str(x) for x in occGrpStateTop10["rn"]],
+        stCode=[str(y) for y in occGrpStateTop10["stateName"]],
         symx=[str(x)+":0.1" for x in occGrpStateTop10["rn"]],
         rsa=[str(x)+":0.8" for x in occGrpStateTop10["rn"]],
         sa=[str(x)+":0.15" for x in occGrpStateTop10["rn"]],
@@ -187,7 +196,7 @@ def get_OccGrp_Data():
         name=occGrpStateTop10["NAME"],
         realSalAvg=occGrpStateTop10["SALARYREALTIMEAVERAGE"],
         salAvg=occGrpStateTop10["SALARYAVERAGE"],
-        type_color=[colorMap[x] for x in occGrpStateTop10["NAME"]],
+        #type_color=[colorMap[x] for x in occGrpStateTop10["SALARYREALTIMEAVERAGE"]],
         )
     )
     return source, ranks, stateName
@@ -205,7 +214,7 @@ TOOLS = "pan, wheel_zoom, box_zoom, reset, save, tap"
 
 # In[9]:
 
-# pass parameters to generate the map
+# pass parameters to generate the map for avaerage salaries
 mp = figure(tools=TOOLS, toolbar_location="above",
     x_axis_location=None, y_axis_location=None, 
     plot_width=1200, plot_height=1100, x_range=(-180,-65), y_range=(6,75)
@@ -217,19 +226,23 @@ mp.title.text_font_size = '20pt'
 mp1 = mp.patches('x', 'y', source=get_geo_world(),
     fill_color='white', fill_alpha=0.7, line_width=0.5)
 
+# reverse the color list so that dark represents higer salary
+#pl = tuple(reversed(palette))
+
 # add the salary data to the map
-mp2 = mp.patches('x', 'y', source=sourceState, legend = 'statecode',
-    color = 'type_color', fill_alpha=0.7, line_color='grey', line_width=0.5)
+mp2 = mp.patches('x', 'y', source=sourceState, #legend = 'statecode',
+                 fill_color={'field': 'salRealAvg', 'transform': LinearColorMapper(palette=palette)},
+                 fill_alpha=0.7, line_color='grey', line_width=0.5)
 
 # add lables to map
 labels = LabelSet(x='x', y='y', text='statecode', level='glyph', source=sourceState)
 mp.add_layout(labels)
 
 # add color bar for salary Realtime average
-color_map = LinearColorMapper(pd.unique(sourceState.data['type_color']), 
+color_map = LinearColorMapper(palette= palette, 
                               low = min(sourceState.data['salRealAvg']),
                               high = max(sourceState.data['salRealAvg']))
-color_bar = ColorBar(color_mapper=color_map,ticker=BasicTicker(), title='Salary'
+color_bar = ColorBar(color_mapper=color_map,ticker=BasicTicker(), title='Sal Real Avg'
                      , label_standoff=12, border_line_color=None, location=(0,0))
 mp.add_layout(color_bar, 'left')
 
@@ -238,33 +251,38 @@ mp.add_tools(HoverTool(renderers=[mp2],
     point_policy = "follow_mouse",
     tooltips = [
     ("State", "@stateN"),
-        ("Salary Average", "$"+"@salAvg"),
         ("Salary RealTime Average", "$"+"@salRealAvg"),
+        ("Salary Average", "$"+"@salAvg"),
         ("(Lon, Lat)", "($x, $y)"),]))
 
 # add legend properties
-mp.legend.location= 'top_left'
-mp.legend.label_text_font_size = '7pt'
-mp.legend.glyph_height = 8
-mp.legend.label_text_baseline = 'ideographic'
-mp.legend.label_text_font_style = 'bold'
-mp.legend.spacing = 0
-mp.legend.margin = 0
+#mp.legend.location= 'top_left'
+#mp.legend.label_text_font_size = '7pt'
+#mp.legend.glyph_height = 8
+#mp.legend.label_text_baseline = 'ideographic'
+#mp.legend.label_text_font_style = 'bold'
+#mp.legend.spacing = 0
+#mp.legend.margin = 0
 
 tab1 = Panel(child=mp, title="Salary Average Distribution")
 
 
 # In[10]:
 
-# pass parameters for figure 1
-p = figure(tools=TOOLS, toolbar_location="above",
+# pass parameters for top 10 salary by Occupation group and State
+p = figure(tools=TOOLS, toolbar_location="above", 
            x_range=ranks, y_range=list(reversed(stateNm)),
-          plot_width=3000, plot_height=2000)
+           plot_width=3000, plot_height=2000)
 
 p.outline_line_color = None
 
-p.rect("ar", "code", .97, .97, source=sourceOccGrp,
-       fill_alpha=0.5, color="type_color")
+
+pl = Spectral[10]
+p.rect("salRank", "stCode", .97, .97, source=sourceOccGrp,
+       fill_color={'field': 'salRank', 'transform': LinearColorMapper(palette=pl)},
+       fill_alpha=0.5)
+p.xaxis[0].axis_label = "Ranks"
+p.yaxis[0].axis_label = "States"
 
 text_props = {
     "source": sourceOccGrp,
@@ -274,7 +292,7 @@ text_props = {
     "text_baseline": "middle"
 }
 
-p.text(x="symx", y="code", text="name",
+p.text(x="symx", y="stCode", text="name",
        text_font_style="bold", text_font_size="9pt", **text_props)
 
 p.grid.grid_line_color = None
@@ -285,15 +303,13 @@ p.add_tools(HoverTool(
             ("name", "@name"),
             ("Salary Realtime Average", "@realSalAvg"),
             ("Salary Average", "@salAvg"),
-            ("State", "@code"),]))
+            ("State", "@stCode"),]))
 
 # add color bar for salary Realtime average
-#color_p = LinearColorMapper(pd.unique(sourceOccGrp.data['type_color']), 
-#                              low = np.float(min(sourceOccGrp.data['realSalAvg'])),
-#                              high = np.float(max(sourceOccGrp.data['realSalAvg'])))
-#color_barP = ColorBar(color_mapper=color_p,ticker=BasicTicker()
-#                     , label_standoff=12, border_line_color=None, location=(0, 0))
-#p.add_layout(color_barP, 'left')
+color_mapOcc = LinearColorMapper(palette= list(reversed(pl)))
+color_barOcc = ColorBar(color_mapper=color_mapOcc,ticker=BasicTicker(), title='High-Low: 1 to 10'
+                     , label_standoff=12, border_line_color=None, location=(0,0))
+p.add_layout(color_barOcc, 'left')
 
 # create a panel for tab1
 tab2 = Panel(child=p, title="Top 10 Salary Average and Salary Realtime Avegare by Occupation Group - State")
