@@ -70,7 +70,11 @@ def get_data():
     
     occGrpSal = pd.DataFrame()
     # save the link to connect to dashDB
+<<<<<<< HEAD:Visualization/MapSalaryVisualization.py
     url = "jdbc:db2://hostname:port/BLUDB:user=userId;password=password;"
+=======
+    url = "jdbc:db2://**.**.**.**:*****/BLUDB:user=***;password=****;"
+>>>>>>> origin/master:MapSalaryVisualization.py
     
     # extract the required tables from dashDB
     stateareas = sqlContext.read.jdbc(url, 'STATEAREAS')
